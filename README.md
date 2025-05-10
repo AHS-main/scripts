@@ -1,68 +1,109 @@
 # Useful Scripts
 
-A small collection of bash- and python-based utilities I use regularly.
+A small collection of bash-based utilities I use regularly.
 
 ## Prerequisites
 
-- **Bash** (for `.sh` scripts)
-- **tree** (optional, for `dump_dir.sh`’s directory-tree display)
-- **SSH keys** configured (for `rsync_pyproj.sh`)
+* **Bash** (for `.sh` scripts)
+* **tree** (optional, for `dump_dir.sh`’s directory-tree display)
+* **SSH keys** configured (for `rsync_pyproj.sh` & `rsync_files.sh`)
 
-## dump_dir.sh
+---
 
-Dumps a full directory tree **and** all text file contents into a single output file.
+## dump\_dir.sh
 
-*Inspired by [uithub](https://uithub.com/). Provides similar functionality but for local projects.*
+Dumps a directory tree **and** all text file contents into a single output file.
 
 ```bash
-dump_dir.sh [options]
-````
+dump_dir.sh [options] <DIR> [OUTPUT_FILE]
+```
+
+* **DIR**: Directory to dump (default: current directory)
+* **OUTPUT\_FILE**: Output file path (default: `~/dumps/<dir_name>_dump.txt`)
 
 **Options:**
 
-* `-d, --dir DIRECTORY`
-  Directory to dump (default: current directory)
-* `-o, --output FILE`
-  Output file path (default: `dump.txt`)
-* `-x, --exclude PATTERN`
-  Additional file or directory patterns to exclude (repeatable)
+* `-e, --exclude PATTERN`
+Additional file or directory patterns to exclude (repeatable).
 * `-h, --help`
-  Show usage
+Show usage and exit.
+
+**Behavior:**
+
+* Defaults to writing the dump to `~/dumps/<basename_of_DIR>_dump.txt` (creates `~/dumps/` if needed).
+* Errors out if the output file would reside inside the dumped directory.
+* Applies all exclude patterns both to the tree display and text-file dumps.
 
 **Example:**
 
 ```bash
-./dump_dir.sh -d ~/Projects -o myproj_dump.txt \
-  -x 'node_modules' -x '*.log'
+# Dump ~/projects/myapp, excluding logs:
+./dump_dir.sh -e 'logs/' ~/projects/myapp
+# → writes to ~/dumps/myapp_dump.txt
 ```
 
 ---
 
 ## rsync\_pyproj.sh
 
-Sync a local Python project to a remote machine over SSH with sensible defaults and easy excludes.
+Sync a local directory (e.g., a Python project) **to** or **from** a remote machine using sensible defaults.
 
 ```bash
-rsync_pyproj.sh -h HOST -r REMOTE_DIR [options]
+rsync_pyproj.sh [options] <SRC> <DEST>
 ```
 
-**Required:**
-
-* `-h HOST`        SSH host or alias (from `~/.ssh/config`)
-* `-r REMOTE_DIR`  Target directory on remote
+* One of `<SRC>` or `<DEST>` must be a remote endpoint (`[USER@]HOST:PATH/`).
 
 **Options:**
 
-* `-l LOCAL_DIR`   Local dir to sync (default: current)
-* `-u USER`        Remote SSH user override
-* `-k`             Keep `.git/` (do NOT exclude)
-* `-d`             Delete extras on remote
-* `-e PATTERN`     Extra `--exclude=PATTERN` (repeatable)
-* `-h, --help`     Show usage
+* `-u USER`
+Override remote SSH user.
+* `-k`
+Keep `.git/` (do **not** exclude it).
+* `-d`
+Delete extraneous files on destination (`--delete`).
+* `-e PATTERN`
+Extra `--exclude=PATTERN` (repeatable).
+* `-h, --help`
+Show usage and exit.
 
-**Example:**
+**Examples:**
 
 ```bash
-./rsync_pyproj.sh -h myserver -r ~/projects/app \
-  -e '*.tmp' -d
+# Push local → remote:
+./rsync_pyproj.sh ./app/ myserver:~/projects/app/
+
+# Pull remote → local, delete extras, exclude logs:
+./rsync_pyproj.sh -d -e 'logs/' myserver:~/projects/app/ ./local_app/
+```
+
+---
+
+## rsync\_files.sh
+
+A general-purpose `rsync` wrapper to sync any two endpoints (local ↔ remote) with easy excludes and optional deletion.
+
+```bash
+rsync_files.sh [options] <SRC> <DEST>
+```
+
+* `<SRC>` and `<DEST>` can both be local paths or one can be a remote endpoint (`[USER@]HOST:PATH/`).
+
+**Options:**
+
+* `-e, --exclude PATTERN`
+Add an `--exclude=PATTERN` (repeatable).
+* `-d, --delete`
+Enable `--delete` to remove extraneous files on the destination.
+* `-h, --help`
+Show usage and exit.
+
+**Examples:**
+
+```bash
+# Upload local → remote, ignoring .tmp files:
+./rsync_files.sh -e '*.tmp' ./site/ user@server:/var/www/site/
+
+# Download remote → local, mirror-deleting extras:
+./rsync_files.sh -d user@server:/var/logs/ ./logs/
 ```
