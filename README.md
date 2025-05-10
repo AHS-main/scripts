@@ -12,7 +12,7 @@ A small collection of bash- and python-based utilities I use regularly.
 
 Dumps a full directory tree **and** all text file contents into a single output file.
 
-*Inspired by [uithib](https://uithub.com/). Provides similar functionality but for local projects.*
+*Inspired by [uithub](https://uithub.com/). Provides similar functionality but for local projects.*
 
 ```bash
 dump_dir.sh [options]

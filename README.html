@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>README.html</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+
+</head>
+
+<body>
+
+<h1 id="useful-scripts">Useful Scripts</h1>
+<p>A small collection of bash- and python-based utilities I use
+regularly.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li><strong>Bash</strong> (for <code>.sh</code> scripts)</li>
+<li><strong>tree</strong> (optional, for <code>dump_dir.sh</code>’s
+directory-tree display)</li>
+<li><strong>SSH keys</strong> configured (for
+<code>rsync_pyproj.sh</code>)</li>
+</ul>
+<h2 id="dump_dir.sh">dump_dir.sh</h2>
+<p>Dumps a full directory tree <strong>and</strong> all text file
+contents into a single output file.</p>
+<p><em>Inspired by <a href="https://uithub.com/">uithub</a>. Provides
+similar functionality but for local projects.</em></p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">dump_dir.sh</span> <span class="pp">[</span><span class="ss">options</span><span class="pp">]</span></span></code></pre></div>
+<p><strong>Options:</strong></p>
+<ul>
+<li><code>-d, --dir DIRECTORY</code> Directory to dump (default: current
+directory)</li>
+<li><code>-o, --output FILE</code> Output file path (default:
+<code>dump.txt</code>)</li>
+<li><code>-x, --exclude PATTERN</code> Additional file or directory
+patterns to exclude (repeatable)</li>
+<li><code>-h, --help</code> Show usage</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./dump_dir.sh</span> <span class="at">-d</span> ~/Projects <span class="at">-o</span> myproj_dump.txt <span class="dt">\</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-x</span> <span class="st">&#39;node_modules&#39;</span> <span class="at">-x</span> <span class="st">&#39;*.log&#39;</span></span></code></pre></div>
+<hr />
+<h2 id="rsync_pyproj.sh">rsync_pyproj.sh</h2>
+<p>Sync a local Python project to a remote machine over SSH with
+sensible defaults and easy excludes.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rsync_pyproj.sh</span> <span class="at">-h</span> HOST <span class="at">-r</span> REMOTE_DIR <span class="pp">[</span><span class="ss">options</span><span class="pp">]</span></span></code></pre></div>
+<p><strong>Required:</strong></p>
+<ul>
+<li><code>-h HOST</code> SSH host or alias (from
+<code>~/.ssh/config</code>)</li>
+<li><code>-r REMOTE_DIR</code> Target directory on remote</li>
+</ul>
+<p><strong>Options:</strong></p>
+<ul>
+<li><code>-l LOCAL_DIR</code> Local dir to sync (default: current)</li>
+<li><code>-u USER</code> Remote SSH user override</li>
+<li><code>-k</code> Keep <code>.git/</code> (do NOT exclude)</li>
+<li><code>-d</code> Delete extras on remote</li>
+<li><code>-e PATTERN</code> Extra <code>--exclude=PATTERN</code>
+(repeatable)</li>
+<li><code>-h, --help</code> Show usage</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./rsync_pyproj.sh</span> <span class="at">-h</span> myserver <span class="at">-r</span> ~/projects/app <span class="dt">\</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-e</span> <span class="st">&#39;*.tmp&#39;</span> <span class="at">-d</span></span></code></pre></div>
+
+</body>
+</html>
